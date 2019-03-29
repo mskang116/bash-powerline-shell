@@ -1,11 +1,29 @@
 #!/bin/bash
 
 # TODO: Currently, this is hardcoded. Ideally, this should be rewritten to be configurable.
+# function to set terminal title
+function set-title(){
+  TITLE="\[\e]2;\w\a\]"
+  PS1="${PS1}${TITLE}"
+}
+
+function powerline_git_on {
+  GIT_FLAG='y'
+}
+
+function powerline_git_off {
+  unset GIT_FLAG;
+}
 
 function ps1_powerline {
   RETCODE=$? # save return code
   NUM_JOBS=$(jobs -rp | wc -l)
-  GIT_BRANCH=$(__git_ps1)
+  if [ "$GIT_FLAG" == "y" ]
+  then
+    GIT_BRANCH=$(__git_ps1)
+  else
+    GIT_BRANCH=""
+  fi
 
   local GREY="\[\e[48;5;240m\]\[\e[38;5;250m\]"
   local GREY_END="\[\e[48;5;2m\]\[\e[38;5;240m\]"
@@ -47,18 +65,18 @@ function ps1_powerline {
     if [ "$RETCODE" -eq 0 ]; then
       if [ "$NUM_JOBS" -eq 0 ]; then
         # No jobs or ret code
-        PS1="$GREY \t $GREY_END$GREEN @\h $GREEN_END$BLUE \W $BLUE_END_ALT$PROMPT \$ $PROMPT_END"
+        PS1="$GREY \t $GREY_END$GREEN \u $GREEN_END$BLUE \W $BLUE_END_ALT$PROMPT \$ $PROMPT_END"
       else
         # no ret code but jobs
-        PS1="$GREY \t $GREY_END$GREEN @\h $GREEN_END$BLUE \W $BLUE_END_JOBS$JOBS$NUM_JOBS $JOBS_END$PROMPT \$ $PROMPT_END"
+        PS1="$GREY \t $GREY_END$GREEN \u $GREEN_END$BLUE \W $BLUE_END_JOBS$JOBS$NUM_JOBS $JOBS_END$PROMPT \$ $PROMPT_END"
       fi
     else
       if [ "$NUM_JOBS" -eq 0 ]; then
         # No jobs but ret code is there
-        PS1="$GREY \t $GREY_END$GREEN @\h $GREEN_END$BLUE \W $BLUE_END_RET$RET \$ ⚑ $RETCODE $RET_END"
+        PS1="$GREY \t $GREY_END$GREEN \u $GREEN_END$BLUE \W $BLUE_END_RET$RET \$ ⚑ $RETCODE $RET_END"
       else
         # Both jobs and ret code
-        PS1="$GREY \t $GREY_END$GREEN @\h $GREEN_END$BLUE \W $BLUE_END_JOBS$JOBS$NUM_JOBS $JOBS_NO_GIT_END$RET \$ ⚑ $RETCODE $RET_END"
+        PS1="$GREY \t $GREY_END$GREEN \u $GREEN_END$BLUE \W $BLUE_END_JOBS$JOBS$NUM_JOBS $JOBS_NO_GIT_END$RET \$ ⚑ $RETCODE $RET_END"
       fi
     fi
   else
@@ -76,22 +94,24 @@ function ps1_powerline {
     if [ "$RETCODE" -eq 0 ]; then
       if [ "$NUM_JOBS" -eq 0 ]; then
         # No jobs or ret code
-        PS1="$GREY \t $GREY_END$GREEN @\h $GREEN_END$BLUE \W $BLUE_END$ORANGE $GIT_BRANCH $GIT_STATUS$PROMPT \$ $PROMPT_END"
+        PS1="$GREY \t $GREY_END$GREEN \u $GREEN_END$BLUE \W $BLUE_END$ORANGE $GIT_BRANCH $GIT_STATUS$PROMPT \$ $PROMPT_END"
       else
         # no ret code but jobs
-        PS1="$GREY \t $GREY_END$GREEN @\h $GREEN_END$BLUE \W $BLUE_END_JOBS$JOBS$NUM_JOBS $JOBS_NO_RET_END$ORANGE $GIT_BRANCH $GIT_STATUS$PROMPT \$ $PROMPT_END"
+        PS1="$GREY \t $GREY_END$GREEN \u $GREEN_END$BLUE \W $BLUE_END_JOBS$JOBS$NUM_JOBS $JOBS_NO_RET_END$ORANGE $GIT_BRANCH $GIT_STATUS$PROMPT \$ $PROMPT_END"
       fi
     else
       if [ "$NUM_JOBS" -eq 0 ]; then
         # No jobs but ret code is there
-        PS1="$GREY \t $GREY_END$GREEN @\h $GREEN_END$BLUE \W $BLUE_END$ORANGE $GIT_BRANCH $GIT_STATUS$RET \$ ⚑ $RETCODE $RET_END"
+        PS1="$GREY \t $GREY_END$GREEN \u $GREEN_END$BLUE \W $BLUE_END$ORANGE $GIT_BRANCH $GIT_STATUS$RET \$ ⚑ $RETCODE $RET_END"
       else
         # Both jobs and ret code
-        PS1="$GREY \t $GREY_END$GREEN @\h $GREEN_END$BLUE \W $BLUE_END_JOBS$JOBS$NUM_JOBS $JOBS_NO_RET_END$ORANGE $GIT_BRANCH $GIT_STATUS$RET \$ ⚑ $RETCODE $RET_END"
+        PS1="$GREY \t $GREY_END$GREEN \u $GREEN_END$BLUE \W $BLUE_END_JOBS$JOBS$NUM_JOBS $JOBS_NO_RET_END$ORANGE $GIT_BRANCH $GIT_STATUS$RET \$ ⚑ $RETCODE $RET_END"
       fi
     fi
 
   fi
+
+  set-title
 }
 
 if [  "$TERM" != "linux" ]; then
