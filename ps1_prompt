@@ -47,10 +47,10 @@ function ps1_powerline {
   local JOBS_NO_GIT_END="\[\e[48;5;160m\]\[\e[38;5;93m\]"    # when next segment is prompt with return code
 
   local RET="\[\e[48;5;160m\]\[\e[38;5;255m\]"
-  local RET_END="\[\e[0m\]\[\e[38;5;160m\]\[\e[0m\] "
+  local RET_END="\[\e[0m\]\[\e[38;5;160m\]\[\e[0m\]\n"
 
   local PROMPT="\[\e[48;5;236m\]\[\e[38;5;255m\]"
-  local PROMPT_END="\[\e[0m\]\[\e[38;5;236m\]\[\e[0m\] "
+  local PROMPT_END="\[\e[0m\]\[\e[38;5;236m\]\[\e[0m\]\n"
 
   if [ ! -w "$PWD" ]; then
     # Current directory is not writable
